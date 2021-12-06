@@ -20,8 +20,6 @@ services:
       - mongo-db:/data/db
   redis:
     container_name: node-app-redis
-    image: redis:6.0.12
-    ports:
-      - "6379:6379"
+    image: redis
 volumes:
   mongo-db:
