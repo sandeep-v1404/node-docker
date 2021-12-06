@@ -4,3 +4,4 @@ Dockerfile
 .git
 .gitignore
 package-lock.json
+docker-compose*
