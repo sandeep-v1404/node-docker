@@ -5,15 +5,23 @@ exports.signUp = async (req, res) => {
     const { username, password } = req.body;
     try {
         const hashPassword = await bcryptjs.hash(password, 12);
-        const user = await User.create({
-            username,
-            password: hashPassword,
-        });
-        res.status(201).json({
-            success: true,
-            user,
-        });
-
+        const userExists = await User.find({ username });
+        if (userExists.length) {
+            res.status(400).json({
+                error: "User already exists"
+            })
+        }
+        else {
+            const user = await User.create({
+                username,
+                password: hashPassword,
+            });
+            req.session.user = user;
+            res.status(201).json({
+                success: true,
+                user,
+            });
+        }
     } catch (error) {
         res.status(400).json({
             error: error.message,
@@ -35,6 +43,7 @@ exports.login = async (req, res) => {
         }
         const checkPassword = await bcryptjs.compare(password, user.password);
         if (checkPassword) {
+            req.session.user = user;
             res.status(201).json({
                 success: true,
             })
